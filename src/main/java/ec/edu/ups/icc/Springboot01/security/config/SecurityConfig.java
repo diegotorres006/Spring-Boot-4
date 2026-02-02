@@ -40,8 +40,12 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
+            // 1. Rutas públicas (PRIMERO)
             .requestMatchers("/auth/**").permitAll()
-            .requestMatchers("/error").permitAll() // AGREGA ESTA LÍNEA
+            .requestMatchers("/error").permitAll()
+            .requestMatchers("/actuator/health").permitAll() 
+            
+            // 2. Regla general (AL FINAL)
             .anyRequest().authenticated()
         );
     

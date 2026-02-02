@@ -1,28 +1,33 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/devdb
-    username: ups
-    password: ups123
+    # IMPORTANTE: Permitimos que Docker inyecte la URL, o usamos localhost por defecto
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/devdb}
+    username: ${DB_USERNAME:ups}
+    password: ${DB_PASSWORD:ups123}
   jpa:
-    # Muestra las consultas SQL en la consola
     show-sql: true
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        # Organiza el SQL para que sea legible
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-# Configuración de niveles de log para ver los parámetros (? -> valor)
 logging:
   level:
-    org:
-      hibernate:
-        SQL: DEBUG
-        orm:
-          jdbc:
-            bind: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
 
 server:
   port: 8080
+
+# Corregida la sangría de management (debe estar al mismo nivel que 'spring')
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      # Cambia 'always' por 'never' para evitar el error 500 por exceso de detalles
+      show-details: never
